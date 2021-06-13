@@ -1,0 +1,58 @@
+{
+  "name": "karma-webkit-launcher",
+  "version": "1.0.0",
+  "description": "A Karma plugin. Launcher for Webkit.",
+  "preferGlobal": true,
+  "keywords": [
+    "karma",
+    "webkit",
+    "launcher",
+    "headless",
+    "playwright"
+  ],
+  "main": "index.js",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.26.1",
+    "eslint": "^7.28.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-compat": "^3.9.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "karma": "^6.3.3",
+    "karma-jasmine": "^4.0.1",
+    "npm-upgrade": "^3.0.0",
+    "playwright": "^1.12.2"
+  },
+  "peerDependencies": {
+    "playwright": "1.x"
+  },
+  "peerDependenciesMeta": {
+    "playwright": {
+      "optional": true
+    }
+  },
+  "author": {
+    "name": "Markus Bordihn",
+    "email": "Markus@Bordihn.de",
+    "url": "https://github.com/MarkusBordihn"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/google/karma-webkit-launcher.git"
+  },
+  "bugs": {
+    "url": "https://github.com/google/karma-webkit-launcher/issues"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test:macos": "karma start test/macos_test.conf",
+    "test:ubuntu": "karma start test/ubuntu_test.conf",
+    "test:windows": "karma start test/windows_test.conf",
+    "sync": "git pull & npm install & npm update && npm prune & npm audit fix",
+    "upgrade": "npm-upgrade & npm install & npm update & npm prune & npm audit fix & npm run test:windows"
+  }
+}
