@@ -50,7 +50,10 @@ WebkitBrowser.prototype = {
 WebkitBrowser.$inject = ["baseBrowserDecorator", "args"];
 
 const WebkitHeadlessBrowser = function (baseBrowserDecorator, args) {
-  const headlessFlags = ["--headless", "--disable-gpu"];
+  const headlessFlags = ["--headless"];
+  if (process.platform == "darwin" || process.platform == "win32") {
+    headlessFlags.push("--disable-gpu");
+  }
   if (args && args.flags && args.flags.length > 0) {
     args.flags = args.flags.concat(headlessFlags);
   } else {
