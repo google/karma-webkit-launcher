@@ -46,7 +46,7 @@ WebkitBrowser.prototype = {
 
   DEFAULT_CMD: {
     darwin: "/Applications/Safari.app/Contents/MacOS/Safari",
-    win32: process.env["ProgramFiles(x86)"] + "\\Safari\\Safari.exe",
+    linux: "/usr/bin/epiphany",
   },
   ENV_CMD: "WEBKIT_BIN",
 };
@@ -66,12 +66,8 @@ const WebkitHeadlessBrowser = function (baseBrowserDecorator, args) {
 
 WebkitHeadlessBrowser.prototype = {
   name: "WebkitHeadless",
-
-  DEFAULT_CMD: {
-    darwin: "/Applications/Safari.app/Contents/MacOS/Safari",
-    win32: process.env["ProgramFiles(x86)"] + "\\Safari\\Safari.exe",
-  },
-  ENV_CMD: "WEBKIT_BIN",
+  DEFAULT_CMD: {},
+  ENV_CMD: "WEBKIT_HEADLESS_BIN",
 };
 
 WebkitHeadlessBrowser.$inject = ["baseBrowserDecorator", "args"];

@@ -41,7 +41,7 @@ $ npm install playwright karma-webkit-launcher --save-dev
 ```js
 // karma.conf.js
 import playwright from "playwright";
-process.env.WEBKIT_BIN = playwright.webkit.executablePath();
+process.env.WEBKIT_HEADLESS_BIN = playwright.webkit.executablePath();
 
 module.exports = function (config) {
   config.set({

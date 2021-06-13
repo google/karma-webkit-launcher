@@ -1,4 +1,4 @@
-name: Windows Tests
+name: Playwright Tests
 
 on:
   push:
@@ -9,8 +9,8 @@ on:
 jobs:
   run-tests:
 
-    name: Run Windows tests
-    runs-on: windows-latest
+    name: Run Playwright tests
+    runs-on: [windows-latest, ubuntu-latest, macos-latest]
 
     steps:
     - name: Check out Git repository
@@ -28,4 +28,4 @@ jobs:
       run: npm ci
 
     - name: Run unit tests
-      run: npm run test:windows
+      run: npm run test

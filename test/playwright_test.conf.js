@@ -1,5 +1,5 @@
 /**
- * @fileoverview Windows specific tests config for karma-webkit-launcher.
+ * @fileoverview Playwright specific tests config for karma-webkit-launcher.
  *
  * @license Copyright 2021 Google Inc. All Rights Reserved.
  *
@@ -19,7 +19,7 @@
  */
 
 const playwright = require("playwright");
-process.env.WEBKIT_BIN = playwright.webkit.executablePath();
+process.env.WEBKIT_HEADLESS_BIN = playwright.webkit.executablePath();
 
 module.exports = (config) => {
   config.set({
