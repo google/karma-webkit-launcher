@@ -1,5 +1,5 @@
 /**
- * @fileoverview Ubuntu specific tests config for karma-webkit-launcher.
+ * @fileoverview Epiphany specific tests config for karma-webkit-launcher.
  *
  * @license Copyright 2021 Google Inc. All Rights Reserved.
  *

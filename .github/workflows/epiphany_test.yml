@@ -1,12 +1,15 @@
-name: Ubuntu Tests
+name: Epiphany Tests
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   run-tests:
 
-    name: Run Ubuntu tests
+    name: Run Epiphany tests on Ubuntu
     runs-on: ubuntu-latest
 
     steps:
@@ -27,4 +30,4 @@ jobs:
     - name: Run unit tests with XVFB
       uses: GabrielBB/xvfb-action@v1
       with:
-        run: npm run test:ubuntu
+        run: npm run test:epiphany

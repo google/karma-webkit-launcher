@@ -29,6 +29,11 @@ function getTempDir() {
   return path.join(os.tmpdir(), uuidv4());
 }
 
+/**
+ * Webkit Browser definition.
+ * @param {*} baseBrowserDecorator
+ * @param {*} args
+ */
 const WebkitBrowser = function (baseBrowserDecorator, args) {
   baseBrowserDecorator(this);
 
@@ -49,6 +54,11 @@ WebkitBrowser.prototype = {
 
 WebkitBrowser.$inject = ["baseBrowserDecorator", "args"];
 
+/**
+ * Webkit Headless Browser definition.
+ * @param {*} baseBrowserDecorator
+ * @param {*} args
+ */
 const WebkitHeadlessBrowser = function (baseBrowserDecorator, args) {
   const headlessFlags = ["--headless"];
   if (process.platform == "darwin" || process.platform == "win32") {
@@ -71,6 +81,11 @@ WebkitHeadlessBrowser.prototype = {
 
 WebkitHeadlessBrowser.$inject = ["baseBrowserDecorator", "args"];
 
+/**
+ * Epiphany Browser definition.
+ * @param {*} baseBrowserDecorator
+ * @param {*} args
+ */
 const EpiphanyBrowser = function (baseBrowserDecorator, args) {
   baseBrowserDecorator(this);
 
@@ -85,7 +100,6 @@ const EpiphanyBrowser = function (baseBrowserDecorator, args) {
 
 EpiphanyBrowser.prototype = {
   name: "Epiphany",
-
   DEFAULT_CMD: {
     linux: "/usr/bin/epiphany",
   },

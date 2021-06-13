@@ -51,7 +51,7 @@
     "lint": "eslint .",
     "test": "karma start test/playwright_test.conf",
     "test:macos": "karma start test/macos_test.conf",
-    "test:ubuntu": "karma start test/ubuntu_test.conf",
+    "test:epiphany": "karma start test/epiphany_test.conf",
     "sync": "git pull & npm install & npm update && npm prune & npm audit fix",
     "upgrade": "npm-upgrade & npm install & npm update & npm prune & npm audit fix & npm run test"
   }
