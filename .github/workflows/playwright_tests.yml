@@ -2,30 +2,33 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   run-tests:
-
     name: Run Playwright tests
-    runs-on: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+        matrix:
+          os: [windows-latest, macos-latest, ubuntu-latest]
 
     steps:
-    - name: Check out Git repository
-      uses: actions/checkout@v2
+      - name: Check out Git repository
+        uses: actions/checkout@v2
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
 
-    - name: Setup Playwright
-      run: npx playwright install-deps
+      - name: Setup Playwright
+        run: npx playwright install-deps
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Run unit tests
-      run: npm run test
+      - name: Run unit tests
+        run: npm run test

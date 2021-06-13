@@ -22,7 +22,7 @@ module.exports = (config) => {
   config.set({
     basePath: "..",
     browserConsoleLogOptions: { level: "warn" },
-    browsers: ["Webkit"],
+    browsers: ["Epiphany"],
     singleRun: true,
     frameworks: ["jasmine"],
     files: [

@@ -43,11 +43,7 @@ const WebkitBrowser = function (baseBrowserDecorator, args) {
 
 WebkitBrowser.prototype = {
   name: "Webkit",
-
-  DEFAULT_CMD: {
-    darwin: "/Applications/Safari.app/Contents/MacOS/Safari",
-    linux: "/usr/bin/epiphany",
-  },
+  DEFAULT_CMD: {},
   ENV_CMD: "WEBKIT_BIN",
 };
 
@@ -72,7 +68,31 @@ WebkitHeadlessBrowser.prototype = {
 
 WebkitHeadlessBrowser.$inject = ["baseBrowserDecorator", "args"];
 
+const EpiphanyBrowser = function (baseBrowserDecorator, args) {
+  baseBrowserDecorator(this);
+
+  this._start = (url) => {
+    const flags = args.flags || [];
+    this._execCommand(
+      this._getCommand(),
+      [url, "--profile " + getTempDir()].concat(flags)
+    );
+  };
+};
+
+EpiphanyBrowser.prototype = {
+  name: "Epiphany",
+
+  DEFAULT_CMD: {
+    linux: "/usr/bin/epiphany",
+  },
+  ENV_CMD: "EPIPHANY_BIN",
+};
+
+EpiphanyBrowser.$inject = ["baseBrowserDecorator", "args"];
+
 module.exports = {
+  "launcher:Epiphany": ["type", EpiphanyBrowser],
   "launcher:Webkit": ["type", WebkitBrowser],
   "launcher:WebkitHeadless": ["type", WebkitHeadlessBrowser],
 };
