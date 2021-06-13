@@ -78,7 +78,7 @@ const EpiphanyBrowser = function (baseBrowserDecorator, args) {
     const flags = args.flags || [];
     this._execCommand(
       this._getCommand(),
-      [url, "--profile " + getTempDir()].concat(flags)
+      [url, "--profile=" + getTempDir()].concat(flags)
     );
   };
 };
