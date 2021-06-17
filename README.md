@@ -1,5 +1,11 @@
 # karma-webkit-launcher
 
+[![Build status: Playwright](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_tests.yml/badge.svg)](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_tests.yml)
+[![Build status: Epiphany](https://github.com/google/karma-webkit-launcher/actions/workflows/epiphany_tests.yml/badge.svg)](https://github.com/google/karma-webkit-launcher/actions/workflows/epiphany_tests.yml)
+[![NPM version](https://img.shields.io/npm/v/karma-webkit-launcher.svg)](https://www.npmjs.org/package/karma-webkit-launcher)
+
+[![NPM](https://nodei.co/npm/karma-webkit-launcher.png?downloads=true&downloadRank=true)](https://nodei.co/npm/karma-webkit-launcher/)
+
 > Launcher for Apple's Webkit
 
 ## Installation

@@ -1,14 +1,17 @@
 {
   "name": "karma-webkit-launcher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Karma plugin. Launcher for Webkit.",
   "preferGlobal": true,
   "keywords": [
-    "karma",
-    "webkit",
-    "launcher",
     "headless",
-    "playwright"
+    "karma",
+    "karma-launcher",
+    "karma-plugin",
+    "launcher",
+    "playwright",
+    "testing",
+    "webkit"
   ],
   "main": "index.js",
   "license": "Apache-2.0",
