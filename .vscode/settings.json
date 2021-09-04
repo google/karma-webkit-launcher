@@ -5,6 +5,11 @@
   "files.trimFinalNewlines": true,
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
-  "cSpell.words": ["uuidv"],
+  "cSpell.words": [
+    "Bordihn",
+    "compat",
+    "Markus",
+    "uuidv"
+  ],
   "cSpell.ignorePaths": ["*.yml", ".vscode", "node_modules"]
 }

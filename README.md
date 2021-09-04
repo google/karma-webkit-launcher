@@ -6,14 +6,14 @@
 
 [![NPM](https://nodei.co/npm/karma-webkit-launcher.png?downloads=true&downloadRank=true)](https://nodei.co/npm/karma-webkit-launcher/)
 
-> Launcher for Apple's Webkit
+Launcher for Apple's Webkit
 
 ## Installation
 
 The easiest way is to keep karma-webkit-launcher as a devDependency in your package.json, by running
 
 ```bash
-$ npm install karma-webkit-launcher --save-dev
+npm install karma-webkit-launcher --save-dev
 ```
 
 ## Configuration
@@ -29,7 +29,7 @@ export default (config) => {
 You can pass list of browsers as a CLI argument too:
 
 ```bash
-$ karma start --browsers Webkit
+karma start --browsers Webkit
 ```
 
 ## Headless Webkit with Playwright
@@ -41,7 +41,7 @@ Headless execution is supported for all the browsers on all platforms. Check out
 ### Usage
 
 ```bash
-$ npm install playwright karma-webkit-launcher --save-dev
+npm install playwright karma-webkit-launcher --save-dev
 ```
 
 ```js
