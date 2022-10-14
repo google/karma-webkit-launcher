@@ -8,7 +8,7 @@
     "plugin:compat/recommended"
   ],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint/eslint-plugin"],
   "parserOptions": {
     "ecmaVersion": 2020
   },
