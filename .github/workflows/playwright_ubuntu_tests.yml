@@ -24,6 +24,9 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
+      - name: Update packages
+        run: sudo apt-get update
+
       - name: Setup Playwright
         run: npx playwright install-deps
 
