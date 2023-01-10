@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: Playwright Tests on ubuntu-latest
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
 
 jobs:
   run-tests:
-    name: Run Playwright tests on macos-latest
-    runs-on: macos-latest
+    name: Run Playwright tests
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -30,5 +30,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run unit tests
-        run: npm run test
+      - name: Run unit tests with XVFB
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm run test

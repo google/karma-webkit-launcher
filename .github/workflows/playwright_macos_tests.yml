@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: Playwright Tests on macos-latest
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
 
 jobs:
   run-tests:
-    name: Run Playwright tests on windows-latest
-    runs-on: windows-latest
+    name: Run Playwright tests
+    runs-on: macos-latest
 
     strategy:
       matrix:

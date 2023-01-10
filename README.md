@@ -1,6 +1,8 @@
 # karma-webkit-launcher
 
-[![Build status: Playwright](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_tests.yml/badge.svg)](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_tests.yml)
+[![Build status: Playwright (MacOS)](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_macos_tests.yml/badge.svg)](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_macos_tests.yml)
+[![Build status: Playwright (Ubuntu)](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_ubuntu_tests.yml/badge.svg)](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_ubuntu_tests.yml)
+[![Build status: Playwright (Windows)](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_windows_tests.yml/badge.svg)](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_windows_tests.yml)
 [![Build status: Epiphany](https://github.com/google/karma-webkit-launcher/actions/workflows/epiphany_tests.yml/badge.svg)](https://github.com/google/karma-webkit-launcher/actions/workflows/epiphany_tests.yml)
 [![NPM version](https://img.shields.io/npm/v/karma-webkit-launcher.svg)](https://www.npmjs.org/package/karma-webkit-launcher)
 
