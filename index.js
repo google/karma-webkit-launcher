@@ -23,6 +23,8 @@ const os = require("os");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 
+const isCI = require("is-ci");
+
 /**
  * @return {string}
  */
@@ -50,10 +52,12 @@ const WebkitBrowser = function (baseBrowserDecorator, args) {
   });
 
   this.on("done", () => {
-    // Make sure to clean up all remaining processes after 500ms delay.
-    setTimeout(() => {
-      childProcessCleanup(id);
-    }, 500);
+    // Clean up all remaining processes after 500ms delay on clients.
+    if (!isCI) {
+      setTimeout(() => {
+        childProcessCleanup(id);
+      }, 500);
+    }
   });
 };
 

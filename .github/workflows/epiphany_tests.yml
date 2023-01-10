@@ -23,6 +23,9 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
+      - name: Update packages
+        run: sudo apt-get update
+
       - name: Install Epiphany Browser
         run: sudo apt-get install epiphany-browser
 

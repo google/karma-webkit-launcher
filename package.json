@@ -16,6 +16,7 @@
   "main": "index.js",
   "license": "Apache-2.0",
   "dependencies": {
+    "is-ci": "^3.0.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
