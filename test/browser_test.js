@@ -22,4 +22,20 @@ describe("Karma Webkit Launcher", function () {
   it("open", function () {
     expect(typeof window.webkitConvertPointFromNodeToPage).toEqual("function");
   });
+
+  it("Calculation: 1 + 1 = 2", function () {
+    expect(1 + 1).toEqual(2);
+  });
+
+  it("Promise with 100ms delay", function (done) {
+    setTimeout(() => {
+      done();
+    }, 100);
+  });
+
+  it("Promise with 500ms delay", function (done) {
+    setTimeout(() => {
+      done();
+    }, 500);
+  });
 });

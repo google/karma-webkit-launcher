@@ -18,6 +18,7 @@
  * @author mbordihn@google.com (Markus Bordihn)
  */
 
+const child_process = require("child_process");
 const os = require("os");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
@@ -37,13 +38,23 @@ function getTempDir() {
 const WebkitBrowser = function (baseBrowserDecorator, args) {
   baseBrowserDecorator(this);
 
-  this._start = (url) => {
+  let id;
+
+  this.on("start", (url) => {
+    id = this.id;
     const flags = args.flags || [];
     this._execCommand(
       this._getCommand(),
       [url, "--user-data-dir=" + getTempDir()].concat(flags)
     );
-  };
+  });
+
+  this.on("done", () => {
+    // Make sure to clean up all remaining processes after 500ms delay.
+    setTimeout(() => {
+      childProcessCleanup(id);
+    }, 500);
+  });
 };
 
 WebkitBrowser.prototype = {
@@ -89,13 +100,13 @@ WebkitHeadlessBrowser.$inject = ["baseBrowserDecorator", "args"];
 const EpiphanyBrowser = function (baseBrowserDecorator, args) {
   baseBrowserDecorator(this);
 
-  this._start = (url) => {
+  this.on("start", (url) => {
     const flags = args.flags || [];
     this._execCommand(
       this._getCommand(),
       [url, "--profile=" + getTempDir()].concat(flags)
     );
-  };
+  });
 };
 
 EpiphanyBrowser.prototype = {
@@ -107,6 +118,45 @@ EpiphanyBrowser.prototype = {
 };
 
 EpiphanyBrowser.$inject = ["baseBrowserDecorator", "args"];
+
+const childProcessCleanup = function (task_id) {
+  if (process.platform == "darwin") {
+    // Find all related child process for playwright based on the task id.
+    const findChildProcesses = `ps | grep "playwright" | grep "id=${task_id}"`;
+    child_process.exec(findChildProcesses, (error, stdout) => {
+      if (error) {
+        throw error;
+      }
+      if (stdout && stdout.includes("playwright") && stdout.includes(task_id)) {
+        const childProcessIds = stdout.match(/^[0-9]+/gm);
+        if (childProcessIds && childProcessIds.length > 0) {
+          childProcessIds.forEach((childProcessId) => {
+            // Check if the process is still valid with a 0 kill signal.
+            try {
+              process.kill(childProcessId, 0);
+            } catch (error) {
+              if (error.code === "EPERM") {
+                console.error(
+                  `No permission to kill child process ${childProcessId} for karma-task ${task_id}`
+                );
+              }
+              return;
+            }
+
+            // Killing child process, if there are no permission error.
+            try {
+              process.kill(childProcessId, "SIGHUP");
+            } catch (killError) {
+              if (killError.code != "ESRCH") {
+                throw killError;
+              }
+            }
+          });
+        }
+      }
+    });
+  }
+};
 
 module.exports = {
   "launcher:Epiphany": ["type", EpiphanyBrowser],
