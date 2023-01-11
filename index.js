@@ -85,10 +85,6 @@ const WebkitBrowser = function (baseBrowserDecorator, args) {
 
   this._start = (url) => {
     const flags = args.flags || [];
-    console.log(
-      this._getCommand(),
-      [url, '--user-data-dir="' + getTempDir()].concat(flags).join(" ")
-    );
     this._execCommand(
       this._getCommand(),
       [url, "--user-data-dir=" + getTempDir()].concat(flags)
