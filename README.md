@@ -20,15 +20,16 @@ npm install karma-webkit-launcher --save-dev
 
 ## Configuration
 
+For the configuration just add `Webkit` or `WebkitHeadless` in your browser list.
+
 ```js
 // karma.conf.js
-// Karma Test Config
 export default (config) => {
   config.set({
     browsers: ['Webkit'],  // You may use 'WebkitHeadless' or other supported browser
 ```
 
-You can pass list of browsers as a CLI argument too:
+You can pass the list of browsers as a CLI argument too:
 
 ```bash
 karma start --browsers Webkit
@@ -38,13 +39,33 @@ karma start --browsers Webkit
 
 [Playwright](https://github.com/microsoft/playwright) is a Node.js library to automate Chromium, Firefox and WebKit with a single API. Playwright is built to enable cross-browser web automation that is ever-green, capable, reliable and fast.
 
-Headless execution is supported for all the browsers on all platforms. Check out [system requirements](https://playwright.dev/docs/intro/#system-requirements) for details.
+Headless execution is supported for all the browsers on all platforms.
+Check out [system requirements](https://playwright.dev/docs/intro/#system-requirements) for details.
 
-### Usage
+If no environment variable is set and playwright is available, it will be used automatically.
+
+### Example Usage
+
+#### Installing Playwright and karma-webkit-launcher
 
 ```bash
 npm install playwright karma-webkit-launcher --save-dev
 ```
+
+#### Example Karma configuration
+
+```js
+// karma.conf.js
+module.exports = function (config) {
+  config.set({
+    browsers: ["WebkitHeadless"],
+  });
+};
+```
+
+### Manually define Playwright executable
+
+To force the use of Playwright over an local instance, just overwrite the `WEBKIT_HEADLESS_BIN` or `WEBKIT_BIN` environment variable.
 
 ```js
 // karma.conf.js
@@ -57,3 +78,7 @@ module.exports = function (config) {
   });
 };
 ```
+
+For more information on Karma see the [karma-homepage].
+
+[karma-homepage]: https://karma-runner.github.io/

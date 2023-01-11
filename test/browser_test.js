@@ -18,24 +18,42 @@
  * @author mbordihn@google.com (Markus Bordihn)
  */
 
+/**
+ * @param {function} callback
+ */
+function deferredCallback(callback) {
+  setTimeout(function () {
+    callback("done.");
+  }, 1000);
+}
+
 describe("Karma Webkit Launcher", function () {
   it("open", function () {
     expect(typeof window.webkitConvertPointFromNodeToPage).toEqual("function");
   });
 
-  it("Calculation: 1 + 1 = 2", function () {
+  it("Simple Calculation: 1 + 1 = 2", function () {
     expect(1 + 1).toEqual(2);
   });
 
-  it("Promise with 100ms delay", function (done) {
+  it("Timeout with 100ms delay", function (done) {
     setTimeout(() => {
       done();
     }, 100);
   });
 
-  it("Promise with 500ms delay", function (done) {
+  it("Timeout with 500ms delay", function (done) {
     setTimeout(() => {
       done();
     }, 500);
+  });
+
+  it("Deferred callback after 1 sec", function () {
+    jasmine.clock().install();
+    const callback = jasmine.createSpy("callback");
+    deferredCallback(callback);
+    jasmine.clock().tick(1000);
+    expect(callback).toHaveBeenCalledWith("done.");
+    jasmine.clock().uninstall();
   });
 });

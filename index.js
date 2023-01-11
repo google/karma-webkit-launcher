@@ -33,6 +33,49 @@ function getTempDir() {
 }
 
 /**
+ * @return {boolean}
+ */
+const isPlaywrightAvailable = function () {
+  try {
+    if (require.resolve("playwright")) {
+      return true;
+    }
+  } catch (e) {
+    return false;
+  }
+  return false;
+};
+
+/**
+ * @return {String}
+ */
+const getPlaywrightExecutable = function () {
+  if (!isPlaywrightAvailable()) {
+    return;
+  }
+  const playwright = require("playwright");
+  return playwright.webkit.executablePath();
+};
+
+/**
+ * @return {boolean}
+ */
+const hasWebkitEnv = function () {
+  return process.env && process.env.WEBKIT_BIN && process.env.WEBKIT_BIN != "";
+};
+
+/**
+ * @return {boolean}
+ */
+const hasWebkitHeadlessEnv = function () {
+  return (
+    process.env &&
+    process.env.WEBKIT_HEADLESS_BIN &&
+    process.env.WEBKIT_HEADLESS_BIN != ""
+  );
+};
+
+/**
  * Webkit Browser definition.
  * @param {*} baseBrowserDecorator
  * @param {*} args
@@ -40,10 +83,7 @@ function getTempDir() {
 const WebkitBrowser = function (baseBrowserDecorator, args) {
   baseBrowserDecorator(this);
 
-  let id;
-
   this.on("start", (url) => {
-    id = this.id;
     const flags = args.flags || [];
     this._execCommand(
       this._getCommand(),
@@ -51,19 +91,30 @@ const WebkitBrowser = function (baseBrowserDecorator, args) {
     );
   });
 
-  this.on("done", () => {
-    // Clean up all remaining processes after 500ms delay on clients.
+  this.on("kill", (done) => {
+    // Clean up all remaining processes after 500ms delay on normal clients.
     if (!isCI) {
-      setTimeout(() => {
-        childProcessCleanup(id);
-      }, 500);
+      childProcessCleanup(this.id, done);
+    } else {
+      done();
+    }
+  });
+
+  this.on("done", () => {
+    // Clean up all remaining processes after 500ms delay on normal clients.
+    if (!isCI) {
+      childProcessCleanup(this.id);
     }
   });
 };
 
 WebkitBrowser.prototype = {
   name: "Webkit",
-  DEFAULT_CMD: {},
+  DEFAULT_CMD: {
+    linux: !hasWebkitEnv() ? getPlaywrightExecutable() : "",
+    darwin: !hasWebkitEnv() ? getPlaywrightExecutable() : "",
+    win32: !hasWebkitEnv() ? getPlaywrightExecutable() : "",
+  },
   ENV_CMD: "WEBKIT_BIN",
 };
 
@@ -90,7 +141,11 @@ const WebkitHeadlessBrowser = function (baseBrowserDecorator, args) {
 
 WebkitHeadlessBrowser.prototype = {
   name: "WebkitHeadless",
-  DEFAULT_CMD: {},
+  DEFAULT_CMD: {
+    linux: !hasWebkitHeadlessEnv() ? getPlaywrightExecutable() : "",
+    darwin: !hasWebkitHeadlessEnv() ? getPlaywrightExecutable() : "",
+    win32: !hasWebkitHeadlessEnv() ? getPlaywrightExecutable() : "",
+  },
   ENV_CMD: "WEBKIT_HEADLESS_BIN",
 };
 
@@ -123,16 +178,28 @@ EpiphanyBrowser.prototype = {
 
 EpiphanyBrowser.$inject = ["baseBrowserDecorator", "args"];
 
-const childProcessCleanup = function (task_id) {
+/**
+ * @param {number} task_id
+ * @param {function} callback
+ */
+const childProcessCleanup = function (task_id, callback) {
   if (process.platform == "darwin") {
     // Find all related child process for playwright based on the task id.
-    const findChildProcesses = `ps | grep "playwright" | grep "id=${task_id}"`;
+    const findChildProcesses = `ps | grep -i "playwright" | grep -i "id=${task_id}"`;
     child_process.exec(findChildProcesses, (error, stdout) => {
-      if (error) {
+      // Ignore error from killed karma processes.
+      if (error && error.signal != "SIGHUP") {
         throw error;
       }
-      if (stdout && stdout.includes("playwright") && stdout.includes(task_id)) {
-        const childProcessIds = stdout.match(/^[0-9]+/gm);
+
+      // Check process list for relevant entries.
+      if (
+        stdout &&
+        stdout.toLowerCase().includes("playwright") &&
+        stdout.includes(task_id)
+      ) {
+        // Extract relevant child process ids.
+        const childProcessIds = stdout.match(/^\s?([0-9])+\s?/gm);
         if (childProcessIds && childProcessIds.length > 0) {
           childProcessIds.forEach((childProcessId) => {
             // Check if the process is still valid with a 0 kill signal.
@@ -151,14 +218,24 @@ const childProcessCleanup = function (task_id) {
             try {
               process.kill(childProcessId, "SIGHUP");
             } catch (killError) {
+              // Ignore errors if process is already killed.
               if (killError.code != "ESRCH") {
                 throw killError;
               }
             }
           });
+
+          // Allow 500ms to close the processes before calling the callback
+          if (callback && typeof callback === "function") {
+            setTimeout(callback, 500);
+          }
+        } else if (callback && typeof callback === "function") {
+          callback();
         }
       }
     });
+  } else {
+    callback();
   }
 };
 
