@@ -1,7 +1,7 @@
 /**
  * @fileoverview Playwright specific tests config for karma-webkit-launcher.
  *
- * @license Copyright 2021 Google Inc. All Rights Reserved.
+ * @license Copyright 2023 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@
  */
 
 const playwright = require("playwright");
-process.env.WEBKIT_BIN = playwright.webkit.executablePath();
+process.env.WEBKIT_HEADLESS_BIN = playwright.webkit.executablePath();
 
 module.exports = (config) => {
   config.set({
     basePath: "..",
     browserConsoleLogOptions: { level: "warn" },
-    browsers: ["Webkit"],
+    browsers: ["WebkitHeadless"],
     singleRun: true,
     frameworks: ["jasmine"],
     files: [

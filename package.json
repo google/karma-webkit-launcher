@@ -54,10 +54,11 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "test": "npm run lint && npm run test:auto_detect && npm run test:playwright",
+    "test": "npm run test:auto_detect && npm run test:playwright && npm run test:playwright_headless",
     "test:auto_detect": "karma start test/auto_detect_test.conf",
     "test:epiphany": "karma start test/epiphany_test.conf",
     "test:playwright": "karma start test/playwright_test.conf",
+    "test:playwright_headless": "karma start test/playwright_headless_test.conf",
     "sync": "git pull && npm install & npm update && npm prune && npm audit fix",
     "upgrade": "npm-upgrade && npm install && npm update && npm prune && npm audit fix && npm run test"
   }

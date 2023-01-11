@@ -83,13 +83,17 @@ const hasWebkitHeadlessEnv = function () {
 const WebkitBrowser = function (baseBrowserDecorator, args) {
   baseBrowserDecorator(this);
 
-  this.on("start", (url) => {
+  this._start = (url) => {
     const flags = args.flags || [];
+    console.log(
+      this._getCommand(),
+      [url, '--user-data-dir="' + getTempDir()].concat(flags).join(" ")
+    );
     this._execCommand(
       this._getCommand(),
       [url, "--user-data-dir=" + getTempDir()].concat(flags)
     );
-  });
+  };
 
   this.on("kill", (done) => {
     // Clean up all remaining processes after 500ms delay on normal clients.
@@ -183,6 +187,7 @@ EpiphanyBrowser.$inject = ["baseBrowserDecorator", "args"];
  * @param {function} callback
  */
 const childProcessCleanup = function (task_id, callback) {
+  const shouldExecuteCallback = callback && typeof callback === "function";
   if (process.platform == "darwin") {
     // Find all related child process for playwright based on the task id.
     const findChildProcesses = `ps | grep -i "playwright" | grep -i "id=${task_id}"`;
@@ -199,7 +204,7 @@ const childProcessCleanup = function (task_id, callback) {
         stdout.includes(task_id)
       ) {
         // Extract relevant child process ids.
-        const childProcessIds = stdout.match(/^\s?([0-9])+\s?/gm);
+        const childProcessIds = stdout.match(/^\s?(\d)+\s?/gm);
         if (childProcessIds && childProcessIds.length > 0) {
           childProcessIds.forEach((childProcessId) => {
             // Check if the process is still valid with a 0 kill signal.
@@ -226,15 +231,15 @@ const childProcessCleanup = function (task_id, callback) {
           });
 
           // Allow 500ms to close the processes before calling the callback
-          if (callback && typeof callback === "function") {
+          if (shouldExecuteCallback) {
             setTimeout(callback, 500);
           }
-        } else if (callback && typeof callback === "function") {
+        } else if (shouldExecuteCallback) {
           callback();
         }
       }
     });
-  } else {
+  } else if (shouldExecuteCallback) {
     callback();
   }
 };
