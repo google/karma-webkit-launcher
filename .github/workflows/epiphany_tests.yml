@@ -33,6 +33,4 @@ jobs:
         run: npm ci
 
       - name: Run unit tests with XVFB
-        uses: GabrielBB/xvfb-action@v1
-        with:
-          run: npm run test:epiphany
+        run: xvfb-run -a npm run test:epiphany
