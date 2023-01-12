@@ -23,12 +23,12 @@ npm install karma-webkit-launcher --save-dev
 
 This karma-webkit-launcher provides the following browser launcher.
 
-| Karma Runner Browsers | ENV                 | Type                |
-| --------------------- | ------------------- | ------------------- |
-| WebKit                | WEBKIT_BIN          | Native / Playwright |
-| WebKitHeadless        | WEBKIT_HEADLESS_BIN | Native / Playwright |
-| Safari                | SAFARI_BIN          | Native MacOS only   |
-| Epiphany              | EPIPHANY_BIN        | Native Ubuntu only  |
+| Karma Runner Browsers | ENV                 | Type                | CI note                |
+| --------------------- | ------------------- | ------------------- | ---------------------- |
+| WebKit                | WEBKIT_BIN          | Native / Playwright | -                      |
+| WebKitHeadless        | WEBKIT_HEADLESS_BIN | Native / Playwright | -                      |
+| Safari                | SAFARI_BIN          | Native MacOS only   | only with SPI disabled |
+| Epiphany              | EPIPHANY_BIN        | Native Ubuntu only  | needs xvfb-run         |
 
 ## Configuration
 

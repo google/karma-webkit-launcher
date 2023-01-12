@@ -96,7 +96,17 @@ const SafariBrowser = function (baseBrowserDecorator, args) {
     const flags = args.flags || [];
     const command = this._getCommand();
     testUrl = url;
-    if (process.platform == "darwin" && command.endsWith("osascript")) {
+    if (command.endsWith("osascript")) {
+      if (process.platform != "darwin") {
+        console.warn(
+          `The platform ${process.platform}, is unsupported for SafariBrowser.`
+        );
+      }
+      if (isCI) {
+        console.warn(
+          `Depending on the CI system, it could be that you need to disable SIP to allow the execution of AppleScripts!`
+        );
+      }
       this._execCommand(
         this._getCommand(),
         [path.resolve(__dirname, "scripts/LaunchSafari.scpt"), url].concat(
@@ -115,7 +125,6 @@ const SafariBrowser = function (baseBrowserDecorator, args) {
     // Close opened tabs if open by osascript.
     if (
       process.platform == "darwin" &&
-      !isCI &&
       this._getCommand().endsWith("osascript")
     ) {
       closeSafariTab(testUrl);
@@ -127,7 +136,6 @@ const SafariBrowser = function (baseBrowserDecorator, args) {
     // Close opened tabs if open by osascript.
     if (
       process.platform == "darwin" &&
-      !isCI &&
       this._getCommand().endsWith("osascript")
     ) {
       closeSafariTab(testUrl);
