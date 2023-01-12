@@ -28,4 +28,4 @@ jobs:
         run: npm ci
 
       - name: Run unit tests
-        run: sudo npm run test:safari
+        run: npm run test:safari
