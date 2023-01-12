@@ -60,6 +60,13 @@ const getPlaywrightExecutable = function () {
 /**
  * @return {boolean}
  */
+const hasSafariEnv = function () {
+  return process.env && process.env.SAFARI_BIN && process.env.SAFARI_BIN != "";
+};
+
+/**
+ * @return {boolean}
+ */
 const hasWebkitEnv = function () {
   return process.env && process.env.WEBKIT_BIN && process.env.WEBKIT_BIN != "";
 };
@@ -74,6 +81,69 @@ const hasWebkitHeadlessEnv = function () {
     process.env.WEBKIT_HEADLESS_BIN != ""
   );
 };
+
+/**
+ * Safari Browser definition.
+ * @param {*} baseBrowserDecorator
+ * @param {*} args
+ */
+const SafariBrowser = function (baseBrowserDecorator, args) {
+  baseBrowserDecorator(this);
+
+  let testUrl;
+
+  this._start = (url) => {
+    const flags = args.flags || [];
+    const command = this._getCommand();
+    testUrl = url;
+    if (process.platform == "darwin" && command.endsWith("osascript")) {
+      this._execCommand(
+        this._getCommand(),
+        [path.resolve(__dirname, "scripts/LaunchSafari.scpt"), url].concat(
+          flags
+        )
+      );
+    } else {
+      this._execCommand(
+        this._getCommand(),
+        [url, "--user-data-dir=" + getTempDir()].concat(flags)
+      );
+    }
+  };
+
+  this.on("kill", (done) => {
+    // Close opened tabs if open by osascript.
+    if (
+      process.platform == "darwin" &&
+      !isCI &&
+      this._getCommand().endsWith("osascript")
+    ) {
+      closeSafariTab(testUrl);
+    }
+    done();
+  });
+
+  this.on("done", () => {
+    // Close opened tabs if open by osascript.
+    if (
+      process.platform == "darwin" &&
+      !isCI &&
+      this._getCommand().endsWith("osascript")
+    ) {
+      closeSafariTab(testUrl);
+    }
+  });
+};
+
+SafariBrowser.prototype = {
+  name: "Safari",
+  DEFAULT_CMD: {
+    darwin: !hasSafariEnv() ? "/usr/bin/osascript" : "",
+  },
+  ENV_CMD: "SAFARI_BIN",
+};
+
+SafariBrowser.$inject = ["baseBrowserDecorator", "args"];
 
 /**
  * Webkit Browser definition.
@@ -179,6 +249,24 @@ EpiphanyBrowser.prototype = {
 EpiphanyBrowser.$inject = ["baseBrowserDecorator", "args"];
 
 /**
+ * @param {string} url
+ */
+const closeSafariTab = function (url) {
+  if (!url || url == "") {
+    return;
+  }
+  const findChildProcesses = `osascript ${path.resolve(
+    __dirname,
+    "scripts/CloseSafariTab.scpt"
+  )} "${url}"`;
+  child_process.exec(findChildProcesses, (error) => {
+    if (error && error.signal != "SIGHUP") {
+      throw error;
+    }
+  });
+};
+
+/**
  * @param {number} task_id
  * @param {function} callback
  */
@@ -202,31 +290,9 @@ const childProcessCleanup = function (task_id, callback) {
         // Extract relevant child process ids.
         const childProcessIds = stdout.match(/^\s?(\d)+\s?/gm);
         if (childProcessIds && childProcessIds.length > 0) {
-          childProcessIds.forEach((childProcessId) => {
-            // Check if the process is still valid with a 0 kill signal.
-            try {
-              process.kill(childProcessId, 0);
-            } catch (error) {
-              if (error.code === "EPERM") {
-                console.error(
-                  `No permission to kill child process ${childProcessId} for karma-task ${task_id}`
-                );
-              }
-              return;
-            }
+          killChildProcesses(childProcessIds, task_id);
 
-            // Killing child process, if there are no permission error.
-            try {
-              process.kill(childProcessId, "SIGHUP");
-            } catch (killError) {
-              // Ignore errors if process is already killed.
-              if (killError.code != "ESRCH") {
-                throw killError;
-              }
-            }
-          });
-
-          // Allow 500ms to close the processes before calling the callback
+          // Allow 500ms to close the processes before calling the callback.
           if (shouldExecuteCallback) {
             setTimeout(callback, 500);
           }
@@ -240,8 +306,43 @@ const childProcessCleanup = function (task_id, callback) {
   }
 };
 
+/**
+ * @param {Array} childProcessIds
+ * @param {String} task_id
+ */
+const killChildProcesses = function (childProcessIds, task_id = "unknown") {
+  if (!childProcessIds || childProcessIds.length <= 0) {
+    return;
+  }
+
+  childProcessIds.forEach((childProcessId) => {
+    // Check if the process is still valid with a 0 kill signal.
+    try {
+      process.kill(childProcessId, 0);
+    } catch (error) {
+      if (error.code === "EPERM") {
+        console.error(
+          `No permission to kill child process ${childProcessId} for karma-task ${task_id}`
+        );
+      }
+      return;
+    }
+
+    // Killing child process, if there are no permission error.
+    try {
+      process.kill(childProcessId, "SIGHUP");
+    } catch (killError) {
+      // Ignore errors if process is already killed.
+      if (killError.code != "ESRCH") {
+        throw killError;
+      }
+    }
+  });
+};
+
 module.exports = {
   "launcher:Epiphany": ["type", EpiphanyBrowser],
+  "launcher:Safari": ["type", SafariBrowser],
   "launcher:Webkit": ["type", WebkitBrowser],
   "launcher:WebkitHeadless": ["type", WebkitHeadlessBrowser],
 };

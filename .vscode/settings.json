@@ -10,6 +10,8 @@
     "compat",
     "fileoverview",
     "Markus",
+    "osascript",
+    "scpt",
     "uuidv"
   ],
   "cSpell.ignorePaths": ["*.yml", ".vscode", "node_modules"]

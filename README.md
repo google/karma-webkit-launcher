@@ -3,6 +3,7 @@
 [![Build status: Playwright (MacOS)](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_macos_tests.yml/badge.svg)](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_macos_tests.yml)
 [![Build status: Playwright (Ubuntu)](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_ubuntu_tests.yml/badge.svg)](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_ubuntu_tests.yml)
 [![Build status: Playwright (Windows)](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_windows_tests.yml/badge.svg)](https://github.com/google/karma-webkit-launcher/actions/workflows/playwright_windows_tests.yml)
+[![Build status: Safari](https://github.com/google/karma-webkit-launcher/actions/workflows/safari_tests.yml/badge.svg)](https://github.com/google/karma-webkit-launcher/actions/workflows/safari_tests.yml)
 [![Build status: Epiphany](https://github.com/google/karma-webkit-launcher/actions/workflows/epiphany_tests.yml/badge.svg)](https://github.com/google/karma-webkit-launcher/actions/workflows/epiphany_tests.yml)
 [![NPM version](https://img.shields.io/npm/v/karma-webkit-launcher.svg)](https://www.npmjs.org/package/karma-webkit-launcher)
 
@@ -17,6 +18,17 @@ The easiest way is to keep karma-webkit-launcher as a devDependency in your pack
 ```bash
 npm install karma-webkit-launcher --save-dev
 ```
+
+## Supported WebKit-Launcher
+
+This karma-webkit-launcher provides the following browser launcher.
+
+| Karma Runner Browsers | ENV                 | Type                |
+| --------------------- | ------------------- | ------------------- |
+| WebKit                | WEBKIT_BIN          | Native / Playwright |
+| WebKitHeadless        | WEBKIT_HEADLESS_BIN | Native / Playwright |
+| Safari                | SAFARI_BIN          | Native MacOS only   |
+| Epiphany              | EPIPHANY_BIN        | Native Ubuntu only  |
 
 ## Configuration
 

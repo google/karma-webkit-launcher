@@ -1,6 +1,6 @@
 {
   "name": "karma-webkit-launcher",
-  "version": "1.3.1",
+  "version": "2.0.0",
   "description": "A Karma plugin. Launcher for Webkit.",
   "preferGlobal": true,
   "keywords": [
@@ -57,6 +57,7 @@
     "test": "npm run test:auto_detect && npm run test:playwright && npm run test:playwright_headless",
     "test:auto_detect": "karma start test/auto_detect_test.conf",
     "test:epiphany": "karma start test/epiphany_test.conf",
+    "test:safari": "karma start test/safari_test.conf",
     "test:playwright": "karma start test/playwright_test.conf",
     "test:playwright_headless": "karma start test/playwright_headless_test.conf",
     "sync": "git pull && npm install & npm update && npm prune && npm audit fix",
