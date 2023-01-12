@@ -96,7 +96,7 @@ const SafariBrowser = function (baseBrowserDecorator, args) {
     const flags = args.flags || [];
     const command = this._getCommand();
     testUrl = url;
-    if (command.endsWith("osascript")) {
+    if (command && command.endsWith("osascript")) {
       if (process.platform != "darwin") {
         console.warn(
           `The platform ${process.platform}, is unsupported for SafariBrowser.`
