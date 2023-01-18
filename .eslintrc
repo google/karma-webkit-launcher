@@ -4,13 +4,12 @@
     "google",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
-    "plugin:compat/recommended"
+    "plugin:prettier/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint/eslint-plugin"],
   "parserOptions": {
-    "ecmaVersion": 2020
+    "ecmaVersion": 2021
   },
   "rules": {
     "no-unused-vars": [
@@ -34,17 +33,19 @@
   "env": {
     "browser": false,
     "node": true,
-    "es2020": true
+    "es2021": true
   },
   "globals": {},
   "settings": {},
-  "overrides": [    {
-    "files": ["**/*_test.js"],
-    "env": {
-      "browser": true,
-      "node": true,
-      "es2020": true,
-      "jasmine": true
+  "overrides": [
+    {
+      "files": ["**/*_test.js"],
+      "env": {
+        "browser": true,
+        "node": true,
+        "es2020": true,
+        "jasmine": true
+      }
     }
-  }]
+  ]
 }

@@ -25,12 +25,7 @@ module.exports = (config) => {
     browsers: ["Safari"],
     singleRun: true,
     frameworks: ["jasmine"],
-    files: [
-      {
-        pattern: "test/*_test.js",
-        watched: false,
-      },
-    ],
+    files: ["test/browser_test.js", "test/safari_test.js"],
     plugins: [require.resolve("../"), "karma-jasmine"],
   });
 };

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Playwright specific tests config for karma-webkit-launcher.
+ * @fileoverview Karma Webkit Launcher - Test
  *
  * @license Copyright 2023 Google Inc. All Rights Reserved.
  *
@@ -18,17 +18,12 @@
  * @author mbordihn@google.com (Markus Bordihn)
  */
 
-const playwright = require("playwright");
-process.env.WEBKIT_HEADLESS_BIN = playwright.webkit.executablePath();
-
-module.exports = (config) => {
-  config.set({
-    basePath: "..",
-    browserConsoleLogOptions: { level: "warn" },
-    browsers: ["WebkitHeadless"],
-    singleRun: true,
-    frameworks: ["jasmine"],
-    files: ["test/browser_test.js", "test/playwright_test.js"],
-    plugins: [require.resolve("../"), "karma-jasmine"],
+describe("Karma Webkit Launcher", function () {
+  it("Playwright Environment", function () {
+    expect(
+      new URLSearchParams(document.referrer || window.location.search).get(
+        "test_browser"
+      )
+    ).toEqual("Playwright");
   });
-};
+});

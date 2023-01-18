@@ -58,6 +58,19 @@ const getPlaywrightExecutable = function () {
 };
 
 /**
+ * @return {String}
+ */
+const getWebkitExecutable = function () {
+  if (isPlaywrightAvailable()) {
+    const playwright = require("playwright");
+    return playwright.webkit.executablePath();
+  } else if (process.platform == "darwin") {
+    return "/usr/bin/osascript";
+  }
+  return "";
+};
+
+/**
  * @return {boolean}
  */
 const hasSafariEnv = function () {
@@ -83,19 +96,29 @@ const hasWebkitHeadlessEnv = function () {
 };
 
 /**
+ * @param {String} url
+ * @param {String} test_browser
+ * @return {URL}
+ */
+const addTestBrowserInformation = function (url, test_browser) {
+  const newURL = new URL(url);
+  newURL.searchParams.append("test_browser", test_browser);
+  return newURL;
+};
+
+/**
  * Safari Browser definition.
  * @param {*} baseBrowserDecorator
  * @param {*} args
  */
 const SafariBrowser = function (baseBrowserDecorator, args) {
   baseBrowserDecorator(this);
-
   let testUrl;
 
   this._start = (url) => {
     const flags = args.flags || [];
     const command = this._getCommand();
-    testUrl = url;
+    testUrl = addTestBrowserInformation(url, "Safari");
     if (command && command.endsWith("osascript")) {
       if (process.platform != "darwin") {
         console.warn(
@@ -109,14 +132,14 @@ const SafariBrowser = function (baseBrowserDecorator, args) {
       }
       this._execCommand(
         this._getCommand(),
-        [path.resolve(__dirname, "scripts/LaunchSafari.scpt"), url].concat(
+        [path.resolve(__dirname, "scripts/LaunchSafari.scpt"), testUrl].concat(
           flags
         )
       );
     } else {
       this._execCommand(
         this._getCommand(),
-        [url, "--user-data-dir=" + getTempDir()].concat(flags)
+        [testUrl, "--user-data-dir=" + getTempDir()].concat(flags)
       );
     }
   };
@@ -159,13 +182,33 @@ SafariBrowser.$inject = ["baseBrowserDecorator", "args"];
  * @param {*} args
  */
 const WebkitBrowser = function (baseBrowserDecorator, args) {
+  // Automatically switch to Safari, if osascript is used.
+  if (
+    (process.platform == "darwin") &
+    !hasWebkitEnv() &
+    getWebkitExecutable().endsWith("osascript")
+  ) {
+    SafariBrowser.call(this, baseBrowserDecorator, args);
+    return;
+  }
+
   baseBrowserDecorator(this);
+  let testUrl;
 
   this._start = (url) => {
+    const command = this._getCommand();
+
+    // Add used browser to test url.
+    if (command && command.includes("ms-playwright")) {
+      testUrl = addTestBrowserInformation(url, "Playwright");
+    } else {
+      testUrl = addTestBrowserInformation(url, "Custom");
+    }
+
     const flags = args.flags || [];
     this._execCommand(
       this._getCommand(),
-      [url, "--user-data-dir=" + getTempDir()].concat(flags)
+      [testUrl, "--user-data-dir=" + getTempDir()].concat(flags)
     );
   };
 
@@ -190,7 +233,7 @@ WebkitBrowser.prototype = {
   name: "Webkit",
   DEFAULT_CMD: {
     linux: !hasWebkitEnv() ? getPlaywrightExecutable() : "",
-    darwin: !hasWebkitEnv() ? getPlaywrightExecutable() : "",
+    darwin: !hasWebkitEnv() ? getWebkitExecutable() : "",
     win32: !hasWebkitEnv() ? getPlaywrightExecutable() : "",
   },
   ENV_CMD: "WEBKIT_BIN",

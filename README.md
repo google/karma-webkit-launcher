@@ -22,12 +22,12 @@ npm install karma-webkit-launcher --save-dev
 
 This karma-webkit-launcher provides the following browser launcher.
 
-| Karma Runner Browsers | ENV                 | Type                | CI note        |
-| --------------------- | ------------------- | ------------------- | -------------- |
-| WebKit                | WEBKIT_BIN          | Native / Playwright | -              |
-| WebKitHeadless        | WEBKIT_HEADLESS_BIN | Native / Playwright | -              |
-| Safari                | SAFARI_BIN          | Native MacOS only   | not supported  |
-| Epiphany              | EPIPHANY_BIN        | Native Ubuntu only  | needs xvfb-run |
+| Karma Runner Browsers | ENV                 | Type                                      | CI note        |
+| --------------------- | ------------------- | ----------------------------------------- | -------------- |
+| WebKit                | WEBKIT_BIN          | Native / Playwright / Safari (MacOS only) | -              |
+| WebKitHeadless        | WEBKIT_HEADLESS_BIN | Native / Playwright                       | -              |
+| Safari                | SAFARI_BIN          | Native MacOS only                         | not supported  |
+| Epiphany              | EPIPHANY_BIN        | Native Ubuntu only                        | needs xvfb-run |
 
 ## Configuration
 
@@ -89,6 +89,29 @@ module.exports = function (config) {
   });
 };
 ```
+
+## Advanced Topics
+
+### Detected if Safari or Playwright is used
+
+In some instances it is helpful to detect if Playwright or a real Safari Browser is used.
+For this reason it's possible to detect which kind of browser is currently running the tests over this runner.
+
+```javascript
+if (new URLSearchParams(document.referrer || window.location.search).get("test_browser") == "Playwright") {
+  // Playwright specific tests
+}
+```
+
+See: [Playwright Karma Test](test/playwright_test.js)
+
+```javascript
+if (new URLSearchParams(document.referrer || window.location.search).get("test_browser") == "Safari") {
+  // Safari specific tests
+}
+```
+
+See: [Safari Karma Test](test/safari_test.js)
 
 For more information on Karma see the [karma-homepage].
 
