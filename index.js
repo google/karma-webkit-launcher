@@ -182,10 +182,13 @@ SafariBrowser.$inject = ["baseBrowserDecorator", "args"];
  * @param {*} args
  */
 const WebkitBrowser = function (baseBrowserDecorator, args) {
-  // Automatically switch to Safari, if osascript is used.
+  // Automatically switch to Safari, if osascript is used and not headless mode.
   if (
-    (process.platform == "darwin") &
-    !hasWebkitEnv() &
+    (args && args.flags
+      ? !args.flags.join(" ").includes("--headless")
+      : true) &&
+    process.platform == "darwin" &&
+    !hasWebkitEnv() &&
     getWebkitExecutable().endsWith("osascript")
   ) {
     SafariBrowser.call(this, baseBrowserDecorator, args);
@@ -279,12 +282,14 @@ WebkitHeadlessBrowser.$inject = ["baseBrowserDecorator", "args"];
  */
 const EpiphanyBrowser = function (baseBrowserDecorator, args) {
   baseBrowserDecorator(this);
+  let testUrl;
 
   this.on("start", (url) => {
+    testUrl = addTestBrowserInformation(url, "Epiphany");
     const flags = args.flags || [];
     this._execCommand(
       this._getCommand(),
-      [url, "--profile=" + getTempDir()].concat(flags)
+      [testUrl, "--profile=" + getTempDir()].concat(flags)
     );
   });
 };

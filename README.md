@@ -8,7 +8,7 @@
 
 [![NPM](https://nodei.co/npm/karma-webkit-launcher.png?downloads=true&downloadRank=true)](https://nodei.co/npm/karma-webkit-launcher/)
 
-Launcher for Apple's Webkit
+Karma Launcher for Apple's Webkit
 
 ## Installation
 
@@ -22,12 +22,12 @@ npm install karma-webkit-launcher --save-dev
 
 This karma-webkit-launcher provides the following browser launcher.
 
-| Karma Runner Browsers | ENV                 | Type                                      | CI note        |
-| --------------------- | ------------------- | ----------------------------------------- | -------------- |
-| WebKit                | WEBKIT_BIN          | Native / Playwright / Safari (MacOS only) | -              |
-| WebKitHeadless        | WEBKIT_HEADLESS_BIN | Native / Playwright                       | -              |
-| Safari                | SAFARI_BIN          | Native MacOS only                         | not supported  |
-| Epiphany              | EPIPHANY_BIN        | Native Ubuntu only                        | needs xvfb-run |
+| Karma Runner Browsers | ENV                 | Type                                                              | CI note        |
+| --------------------- | ------------------- | ----------------------------------------------------------------- | -------------- |
+| WebKit                | WEBKIT_BIN          | Native / [Playwright][playwright] / [Safari][safari] (MacOS only) | -              |
+| WebKitHeadless        | WEBKIT_HEADLESS_BIN | Native / [Playwright][playwright]                                 | -              |
+| Safari                | SAFARI_BIN          | Native MacOS only                                                 | not supported  |
+| Epiphany              | EPIPHANY_BIN        | Native Ubuntu only                                                | needs xvfb-run |
 
 ## Configuration
 
@@ -76,7 +76,7 @@ module.exports = function (config) {
 
 ### Manually define Playwright executable
 
-To force the use of Playwright over an local instance, just overwrite the `WEBKIT_HEADLESS_BIN` or `WEBKIT_BIN` environment variable.
+To force the use of Playwright over an local Webkit instance, just overwrite the `WEBKIT_HEADLESS_BIN` or `WEBKIT_BIN` environment variable.
 
 ```js
 // karma.conf.js
@@ -98,7 +98,11 @@ In some instances it is helpful to detect if Playwright or a real Safari Browser
 For this reason it's possible to detect which kind of browser is currently running the tests over this runner.
 
 ```javascript
-if (new URLSearchParams(document.referrer || window.location.search).get("test_browser") == "Playwright") {
+if (
+  new URLSearchParams(document.referrer || window.location.search).get(
+    "test_browser"
+  ) == "Playwright"
+) {
   // Playwright specific tests
 }
 ```
@@ -106,13 +110,19 @@ if (new URLSearchParams(document.referrer || window.location.search).get("test_b
 See: [Playwright Karma Test](test/playwright_test.js)
 
 ```javascript
-if (new URLSearchParams(document.referrer || window.location.search).get("test_browser") == "Safari") {
+if (
+  new URLSearchParams(document.referrer || window.location.search).get(
+    "test_browser"
+  ) == "Safari"
+) {
   // Safari specific tests
 }
 ```
 
 See: [Safari Karma Test](test/safari_test.js)
 
-For more information on Karma see the [karma-homepage].
+For more information on Karma see the [Karma Homepage][karma].
 
-[karma-homepage]: https://karma-runner.github.io/
+[karma]: https://karma-runner.github.io/
+[playwright]: https://playwright.dev/
+[safari]: https://www.apple.com/safari/
