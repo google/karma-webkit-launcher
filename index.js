@@ -47,23 +47,59 @@ const isPlaywrightAvailable = function () {
 };
 
 /**
+ * @return {boolean}
+ */
+const isPlaywrightCoreAvailable = function () {
+  try {
+    if (require.resolve("playwright-core")) {
+      return true;
+    }
+  } catch (e) {
+    return false;
+  }
+  return false;
+};
+
+/**
+ * @return {boolean}
+ */
+const isPlaywrightWebkitAvailable = function () {
+  try {
+    if (require.resolve("playwright-webkit")) {
+      return true;
+    }
+  } catch (e) {
+    return false;
+  }
+  return false;
+};
+
+/**
  * @return {String}
  */
 const getPlaywrightExecutable = function () {
-  if (!isPlaywrightAvailable()) {
-    return;
+  if (isPlaywrightAvailable()) {
+    const playwright = require("playwright");
+    return playwright.webkit.executablePath();
+  } else if (isPlaywrightWebkitAvailable()) {
+    const playwright = require("playwright-webkit");
+    return playwright.webkit.executablePath();
+  } else if (isPlaywrightCoreAvailable()) {
+    const playwright = require("playwright-core");
+    return playwright.webkit.executablePath();
   }
-  const playwright = require("playwright");
-  return playwright.webkit.executablePath();
 };
 
 /**
  * @return {String}
  */
 const getWebkitExecutable = function () {
-  if (isPlaywrightAvailable()) {
-    const playwright = require("playwright");
-    return playwright.webkit.executablePath();
+  if (
+    isPlaywrightAvailable() ||
+    isPlaywrightWebkitAvailable() ||
+    isPlaywrightCoreAvailable()
+  ) {
+    return getPlaywrightExecutable();
   } else if (process.platform == "darwin") {
     return "/usr/bin/osascript";
   }

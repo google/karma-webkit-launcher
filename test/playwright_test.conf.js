@@ -18,8 +18,8 @@
  * @author mbordihn@google.com (Markus Bordihn)
  */
 
-const playwright = require("playwright");
-process.env.WEBKIT_BIN = playwright.webkit.executablePath();
+const { webkit } = require("playwright-webkit");
+process.env.WEBKIT_BIN = webkit.executablePath();
 
 module.exports = (config) => {
   config.set({

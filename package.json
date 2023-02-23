@@ -1,6 +1,6 @@
 {
   "name": "karma-webkit-launcher",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "A Karma plugin. Launcher for Webkit.",
   "preferGlobal": true,
   "keywords": [
@@ -20,15 +20,15 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.29.2",
-    "@typescript-eslint/eslint-plugin": "^5.48.2",
-    "eslint": "^8.32.0",
+    "@typescript-eslint/eslint-plugin": "^5.53.0",
+    "eslint": "^8.34.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-prettier": "^4.2.1",
     "karma": "^6.4.1",
     "karma-jasmine": "^5.1.0",
-    "karma-webkit-launcher": "^2.0.0"
+    "karma-webkit-launcher": "^2.1.0",
+    "playwright-webkit": "^1.31.1"
   },
   "peerDependenciesMeta": {
     "playwright": {
