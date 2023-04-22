@@ -46,14 +46,15 @@ You can pass the list of browsers as a CLI argument too:
 karma start --browsers Webkit
 ```
 
-## Headless Webkit with Playwright
+## Headless Webkit with Playwright / Playwright-Webkit
 
 [Playwright](https://github.com/microsoft/playwright) is a Node.js library to automate Chromium, Firefox and WebKit with a single API. Playwright is built to enable cross-browser web automation that is ever-green, capable, reliable and fast.
 
 Headless execution is supported for all the browsers on all platforms.
 Check out [system requirements](https://playwright.dev/docs/intro/#system-requirements) for details.
 
-If no environment variable is set and playwright is available, it will be used automatically.
+If no environment variable is set and Playwright is available, it will be automatically utilized.
+Additionally, if you exclusively intend to perform WebKit testing, you can install 'playwright-webkit' exclusively for that purpose.
 
 ### Example Usage
 

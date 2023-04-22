@@ -359,43 +359,50 @@ const closeSafariTab = function (url) {
 };
 
 /**
- * @param {number} task_id
- * @param {function} callback
+ * Cleans up child processes related to the Playwright task ID.
+ * @param {number} task_id - The task ID to search for.
+ * @param {function} callback - An optional callback function to execute after cleanup.
  */
 const childProcessCleanup = function (task_id, callback) {
-  const shouldExecuteCallback = callback && typeof callback === "function";
-  if (process.platform == "darwin") {
-    // Find all related child process for playwright based on the task id.
-    const findChildProcesses = `ps | grep -i "playwright" | grep -i "id=${task_id}"`;
-    child_process.exec(findChildProcesses, (error, stdout) => {
-      // Ignore error from killed karma processes.
-      if (error && error.signal != "SIGHUP") {
-        throw error;
-      }
+  const isCallbackDefined = callback && typeof callback === "function";
 
-      // Check process list for relevant entries.
-      if (
-        stdout &&
-        stdout.toLowerCase().includes("playwright") &&
-        stdout.includes(task_id)
-      ) {
-        // Extract relevant child process ids.
-        const childProcessIds = stdout.match(/^\s?(\d)+\s?/gm);
-        if (childProcessIds && childProcessIds.length > 0) {
-          killChildProcesses(childProcessIds, task_id);
-
-          // Allow 500ms to close the processes before calling the callback.
-          if (shouldExecuteCallback) {
-            setTimeout(callback, 500);
-          }
-        } else if (shouldExecuteCallback) {
-          callback();
-        }
-      }
-    });
-  } else if (shouldExecuteCallback) {
-    callback();
+  if (process.platform !== "darwin") {
+    if (isCallbackDefined) {
+      callback();
+    }
+    return;
   }
+
+  // Find all related child process for playwright based on the task id.
+  const findChildProcesses = `ps | grep -i "playwright" | grep -i "id=${task_id}"`;
+  child_process.exec(findChildProcesses, (error, stdout) => {
+    // Ignore error from killed karma processes.
+    if (error && error.signal != "SIGHUP") {
+      throw error;
+    }
+
+    // Check process list for relevant entries.
+    if (
+      stdout &&
+      stdout.toLowerCase().includes("playwright") &&
+      stdout.includes(task_id)
+    ) {
+      // Extract relevant child process ids.
+      const childProcessIds = stdout.match(/^\s?(\d)+\s?/gm);
+      if (childProcessIds && childProcessIds.length > 0) {
+        killChildProcesses(childProcessIds, task_id);
+
+        // Allow 500ms for the processes to close before calling the callback.
+        if (isCallbackDefined) {
+          setTimeout(callback, 500);
+        }
+      } else if (isCallbackDefined) {
+        callback();
+      }
+    } else if (isCallbackDefined) {
+      callback();
+    }
+  });
 };
 
 /**
