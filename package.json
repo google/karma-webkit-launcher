@@ -1,6 +1,6 @@
 {
   "name": "karma-webkit-launcher",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "A Karma plugin. Launcher for Webkit.",
   "preferGlobal": true,
   "keywords": [
@@ -20,14 +20,14 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/eslint-plugin": "^7.0.1",
     "eslint": "^8.55.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.0.1",
     "karma": "^6.4.2",
     "karma-jasmine": "^5.1.0",
-    "playwright-webkit": "^1.40.1"
+    "playwright-webkit": "^1.41.2"
   },
   "peerDependenciesMeta": {
     "playwright": {
@@ -55,7 +55,7 @@
     "test:playwright": "karma start test/playwright_test.conf",
     "test:playwright_headless": "karma start test/playwright_headless_test.conf",
     "sync": "git pull && npm install & npm update && npm prune && npm audit fix",
-    "upgrade": "npx npm-check -u --skip-unused",
-    "postupgrade": "npm install && npm update && npm prune && npm audit fix && npm run test"
+    "upgrade": "npx npm-check -u --skip-unused && npm install && npm update && npm prune && npm audit fix",
+    "postupgrade": "npm run test"
   }
 }

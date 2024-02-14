@@ -10,9 +10,10 @@ jobs:
   run-tests:
     name: Run Epiphany tests on Ubuntu
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        node: [16, 18]
+        node: [18, 20]
 
     steps:
       - name: Check out Git repository
