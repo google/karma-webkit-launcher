@@ -252,6 +252,12 @@ const WebkitBrowser = function (baseBrowserDecorator, args) {
   };
 
   this.on("kill", (done) => {
+    // On Linux build machines, the bash process that starts the browser may
+    // exit without terminating it. See issue #12
+    if (process.platform === "linux") {
+      killOrphanedMiniBrowser(done);
+      return;
+    }
     // Clean up all remaining processes after 500ms delay on normal clients.
     if (!isCI) {
       childProcessCleanup(this.id, done);
@@ -436,6 +442,28 @@ const killChildProcesses = function (childProcessIds, task_id = "unknown") {
         throw killError;
       }
     }
+  });
+};
+
+const killOrphanedMiniBrowser = function (callback) {
+  // The ps call's output is formatted as follows:
+  // PID     PPID COMMAND
+  // 8686       1 MiniBrowser
+  // A parent process id of 1 indicates it was orphaned
+  child_process.exec('ps -eo pid,ppid,comm | grep -w "1 MiniBrowser"', (error, stdout) => {
+    if (error) {
+      throw error;
+    }
+
+    if (stdout?.includes("MiniBrowser")) {
+      // Extract process id
+      const match = stdout.match(/\b\d+\b/);
+      if (match) {
+        // This kills any process, not just child processes.
+        killChildProcesses(match);
+      }
+    }
+    callback();
   });
 };
 
