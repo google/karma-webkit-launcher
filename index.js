@@ -110,14 +110,14 @@ const getWebkitExecutable = function () {
  * @return {boolean}
  */
 const hasSafariEnv = function () {
-  return process.env && process.env.SAFARI_BIN && process.env.SAFARI_BIN != "";
+  return process.env?.SAFARI_BIN !== "";
 };
 
 /**
  * @return {boolean}
  */
 const hasWebkitEnv = function () {
-  return process.env && process.env.WEBKIT_BIN && process.env.WEBKIT_BIN != "";
+  return process.env?.WEBKIT_BIN ?? false;
 };
 
 /**
@@ -125,9 +125,7 @@ const hasWebkitEnv = function () {
  */
 const hasWebkitHeadlessEnv = function () {
   return (
-    process.env &&
-    process.env.WEBKIT_HEADLESS_BIN &&
-    process.env.WEBKIT_HEADLESS_BIN != ""
+    process.env?.WEBPACK_HEADLESS_BIN && process.env.WEBKIT_HEADLESS_BIN != ""
   );
 };
 
@@ -155,27 +153,27 @@ const SafariBrowser = function (baseBrowserDecorator, args) {
     const flags = args.flags || [];
     const command = this._getCommand();
     testUrl = addTestBrowserInformation(url, "Safari");
-    if (command && command.endsWith("osascript")) {
+    if (command?.endsWith("osascript")) {
       if (process.platform != "darwin") {
         console.warn(
-          `The platform ${process.platform}, is unsupported for SafariBrowser.`
+          `The platform ${process.platform}, is unsupported for SafariBrowser.`,
         );
       }
       if (isCI) {
         console.warn(
-          `Depending on the CI system, it could be that you need to disable SIP to allow the execution of AppleScripts!`
+          `Depending on the CI system, it could be that you need to disable SIP to allow the execution of AppleScripts!`,
         );
       }
       this._execCommand(
         this._getCommand(),
         [path.resolve(__dirname, "scripts/LaunchSafari.scpt"), testUrl].concat(
-          flags
-        )
+          flags,
+        ),
       );
     } else {
       this._execCommand(
         this._getCommand(),
-        [testUrl, "--user-data-dir=" + getTempDir()].concat(flags)
+        [testUrl, "--user-data-dir=" + getTempDir()].concat(flags),
       );
     }
   };
@@ -220,9 +218,7 @@ SafariBrowser.$inject = ["baseBrowserDecorator", "args"];
 const WebkitBrowser = function (baseBrowserDecorator, args) {
   // Automatically switch to Safari, if osascript is used and not headless mode.
   if (
-    (args && args.flags
-      ? !args.flags.join(" ").includes("--headless")
-      : true) &&
+    (args?.flags ? !args.flags.join(" ").includes("--headless") : true) &&
     process.platform == "darwin" &&
     !hasWebkitEnv() &&
     getWebkitExecutable().endsWith("osascript")
@@ -238,7 +234,7 @@ const WebkitBrowser = function (baseBrowserDecorator, args) {
     const command = this._getCommand();
 
     // Add used browser to test url.
-    if (command && command.includes("ms-playwright")) {
+    if (command?.includes("ms-playwright")) {
       testUrl = addTestBrowserInformation(url, "Playwright");
     } else {
       testUrl = addTestBrowserInformation(url, "Custom");
@@ -247,7 +243,7 @@ const WebkitBrowser = function (baseBrowserDecorator, args) {
     const flags = args.flags || [];
     this._execCommand(
       this._getCommand(),
-      [testUrl, "--user-data-dir=" + getTempDir()].concat(flags)
+      [testUrl, "--user-data-dir=" + getTempDir()].concat(flags),
     );
   };
 
@@ -296,7 +292,7 @@ const WebkitHeadlessBrowser = function (baseBrowserDecorator, args) {
   if (process.platform == "darwin" || process.platform == "win32") {
     headlessFlags.push("--disable-gpu");
   }
-  if (args && args.flags && args.flags.length > 0) {
+  if (args?.flags?.length > 0) {
     args.flags = args.flags.concat(headlessFlags);
   } else {
     args = {};
@@ -331,7 +327,7 @@ const EpiphanyBrowser = function (baseBrowserDecorator, args) {
     const flags = args.flags || [];
     this._execCommand(
       this._getCommand(),
-      [testUrl, "--profile=" + getTempDir()].concat(flags)
+      [testUrl, "--profile=" + getTempDir()].concat(flags),
     );
   });
 };
@@ -355,7 +351,7 @@ const closeSafariTab = function (url) {
   }
   const findChildProcesses = `osascript ${path.resolve(
     __dirname,
-    "scripts/CloseSafariTab.scpt"
+    "scripts/CloseSafariTab.scpt",
   )} "${url}"`;
   child_process.exec(findChildProcesses, (error) => {
     if (error && error.signal != "SIGHUP") {
@@ -389,8 +385,7 @@ const childProcessCleanup = function (task_id, callback) {
 
     // Check process list for relevant entries.
     if (
-      stdout &&
-      stdout.toLowerCase().includes("playwright") &&
+      stdout?.toLowerCase()?.includes("playwright") &&
       stdout.includes(task_id)
     ) {
       // Extract relevant child process ids.
@@ -427,7 +422,7 @@ const killChildProcesses = function (childProcessIds, task_id = "unknown") {
     } catch (error) {
       if (error.code === "EPERM") {
         console.error(
-          `No permission to kill child process ${childProcessId} for karma-task ${task_id}`
+          `No permission to kill child process ${childProcessId} for karma-task ${task_id}`,
         );
       }
       return;
@@ -450,21 +445,24 @@ const killOrphanedMiniBrowser = function (callback) {
   // PID     PPID COMMAND
   // 8686       1 MiniBrowser
   // A parent process id of 1 indicates it was orphaned
-  child_process.exec('ps -eo pid,ppid,comm | grep -w "1 MiniBrowser"', (error, stdout) => {
-    if (error) {
-      throw error;
-    }
-
-    if (stdout?.includes("MiniBrowser")) {
-      // Extract process id
-      const match = stdout.match(/\b\d+\b/);
-      if (match) {
-        // This kills any process, not just child processes.
-        killChildProcesses(match);
+  child_process.exec(
+    'ps -eo pid,ppid,comm | grep -w "1 MiniBrowser"',
+    (error, stdout) => {
+      if (error) {
+        throw error;
       }
-    }
-    callback();
-  });
+
+      if (stdout?.includes("MiniBrowser")) {
+        // Extract process id
+        const match = stdout.match(/\b\d+\b/);
+        if (match) {
+          // This kills any process, not just child processes.
+          killChildProcesses(match);
+        }
+      }
+      callback();
+    },
+  );
 };
 
 module.exports = {

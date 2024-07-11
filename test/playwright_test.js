@@ -22,8 +22,8 @@ describe("Karma Webkit Launcher", function () {
   it("Playwright Environment", function () {
     expect(
       new URLSearchParams(document.referrer || window.location.search).get(
-        "test_browser"
-      )
+        "test_browser",
+      ),
     ).toEqual("Playwright");
   });
 });
