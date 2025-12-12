@@ -248,17 +248,21 @@ const WebkitBrowser = function (baseBrowserDecorator, args) {
   };
 
   this.on("kill", (done) => {
-    // On Linux build machines, the bash process that starts the browser may
-    // exit without terminating it. See issue #12
-    if (process.platform === "linux") {
-      killOrphanedMiniBrowser(done);
-      return;
-    }
+
+    let callback = () => {
+
+      done();
+
+      if (process.platform === "linux") {
+        killOrphanedMiniBrowser();
+      }
+    };
+
     // Clean up all remaining processes after 500ms delay on normal clients.
     if (!isCI) {
-      childProcessCleanup(this.id, done);
+      childProcessCleanup(this.id, callback);
     } else {
-      done();
+      callback();
     }
   });
 
@@ -440,7 +444,7 @@ const killChildProcesses = function (childProcessIds, task_id = "unknown") {
   });
 };
 
-const killOrphanedMiniBrowser = function (callback) {
+const killOrphanedMiniBrowser = function () {
   // The ps call's output is formatted as follows:
   // PID     PPID COMMAND
   // 8686       1 MiniBrowser
@@ -449,6 +453,12 @@ const killOrphanedMiniBrowser = function (callback) {
     'ps -eo pid,ppid,comm | grep -w "1 MiniBrowser"',
     (error, stdout) => {
       if (error) {
+        
+        // Error code 1 means "no lines were selected"
+        if (error.code === 1) {
+          return;
+        }
+
         throw error;
       }
 
@@ -460,7 +470,6 @@ const killOrphanedMiniBrowser = function (callback) {
           killChildProcesses(match);
         }
       }
-      callback();
     },
   );
 };
